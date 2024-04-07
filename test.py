@@ -39,7 +39,7 @@ resolution = st.selectbox('Screen Resolution',['1920x1080','1366x768','1600x900'
 cpu = st.selectbox('CPU', data['Cpu_Brand'].unique())
 
 # HDD
-hdd = st.selectbox('HDD(in GB)', [0,128,256,512,1024,2048])
+hdd = st.selectbox('HDD(in GB)', [0,128,256,512,1024])
 
 # SSD
 ssd = st.selectbox('SSD(in GB)', [0,8,128,256,512,1024])
@@ -77,26 +77,38 @@ if st.button('Predict Price'):
     query = query.reshape(1, -1)
     prediction = str(int(np.exp(pipe.predict(query)[0])))
 
-    st.title("The predicted price of this configuration is " + prediction)
     
-    # Filter rows based on user-specified specifications
-    filtered_data = data[
-        (data['Company'] == company) &
-        (data['TypeName'] == lap_type) &
-        (data['Ram'] == ram) &
-        (data['Weight'] == weight)
-        (data['TouchScreen'] == touchscreen) &
-        (data['IPS'] == ips) &
-        (data['PPI'] == ppi) &
-        (data['Cpu_Brand'] == cpu)
-        (data['HDD'] == hdd) &
-        (data['SSD'] == ssd) &
-        (data['Flash_Storage'] == flash) &
-        (data['Gpu_Brand'] == gpu)&
-        (data['Gpu_Brand'] == os)
-        # Add other filters here...
-    ]
+    st.title("The predicted price of this configuration is " + prediction)
 
-    # Display filtered rows
-    st.header("Recommended Laptops")
-    st.dataframe(filtered_data)
+# Add function to display rows containing any one of the specified specifications
+def display_rows_with_specification(data, specifications):
+    filtered_data = pd.DataFrame(columns=data.columns)  # Create an empty DataFrame with the same columns
+    
+    for key, value in specifications.items():
+        if key in data.columns:
+            temp_data = data[data[key] == value]
+            filtered_data = pd.concat([filtered_data, temp_data], ignore_index=True)
+    
+    if not filtered_data.empty:
+        st.header("Laptops that matches with the  Specifications")
+        st.dataframe(filtered_data)
+    else:
+        st.write("No laptops to recommend.")
+
+# Call the function to display rows containing any one of the specified specifications
+if st.button('Show Recommendations'):
+    specifications = {
+        'Company': company,
+        'TypeName': lap_type,
+        'Ram': ram,
+        'Weight': weight,
+        'Touchscreen': touchscreen,
+        'IPS': ips,
+        'Cpu_Brand': cpu,
+        'HDD': hdd,
+        'SSD': ssd,
+        'Flash_Storage': flash,
+        'Gpu_brand': gpu,
+        'OS': os
+    }
+    display_rows_with_specification(data, specifications)
