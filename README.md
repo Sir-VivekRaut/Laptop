@@ -1,4 +1,4 @@
-# Laptop_Price_Prediction
+# Laptop_Price_Prediction_and_Recommendation
 
 A simple Machine learning web app deployed on Heroku which predict laptop prices according to laptop configuration defined by user. 
 
