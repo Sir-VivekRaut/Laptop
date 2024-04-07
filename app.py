@@ -3,6 +3,21 @@ import pickle
 import numpy as np
 import pandas as pd
 
+# Add function to display rows containing any one of the specified specifications
+def display_rows_with_specification(data, specifications):
+    filtered_data = pd.DataFrame(columns=data.columns)  # Create an empty DataFrame with the same columns
+    
+    for key, value in specifications.items():
+        if key in data.columns:
+            temp_data = data[data[key] == value]
+            filtered_data = pd.concat([filtered_data, temp_data], ignore_index=True)
+    
+    if not filtered_data.empty:
+        st.header("Laptops that match the Specifications")
+        st.dataframe(filtered_data)
+    else:
+        st.write("No laptops match the specifications.")
+
 # Load the model and dataframe
 data = pd.read_csv('laptoop.csv')
 pipe = pickle.load(open("pipe.pkl", "rb"))
@@ -53,7 +68,7 @@ gpu = st.selectbox('GPU', data['Gpu_brand'].unique())
 # OS
 os = st.selectbox('OS', data['OS'].unique())
 
-# Prediction
+# Prediction and display rows with specifications
 if st.button('Predict Price'):
     ppi = None
     if touchscreen == "Yes":
@@ -76,9 +91,26 @@ if st.button('Predict Price'):
     query = np.array([company, lap_type, ram, weight, touchscreen, ips, ppi, cpu, hdd, ssd, flash, gpu, os])
     query = query.reshape(1, -1)
     prediction = str(int(np.exp(pipe.predict(query)[0])))
-
     
     st.title("The predicted price of this configuration is " + prediction)
+    
+    # Call the function to display rows containing any one of the specified specifications
+    specifications = {
+        'Company': company,
+        'TypeName': lap_type,
+        'Ram': ram,
+        'Weight': weight,
+        'Touchscreen': touchscreen,
+        'IPS': ips,
+        'Cpu_Brand': cpu,
+        'HDD': hdd,
+        'SSD': ssd,
+        'Flash_Storage': flash,
+        'Gpu_brand': gpu,
+        'OS': os
+    }
+    display_rows_with_specification(data, specifications)
+
 
 # Add function to display rows containing any one of the specified specifications
 def display_rows_with_specification(data, specifications):
@@ -96,7 +128,6 @@ def display_rows_with_specification(data, specifications):
         st.write("No laptops to recommend.")
 
 # Call the function to display rows containing any one of the specified specifications
-if st.button('Show Recommendations'):
     specifications = {
         'Company': company,
         'TypeName': lap_type,
