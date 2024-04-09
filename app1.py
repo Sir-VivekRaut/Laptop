@@ -28,7 +28,11 @@ def main():
                 st.success("Login successful!")
                 st.write("Redirecting to Predicktor...")
                 # Launch
-                webbrowser.open("https://bhendi.streamlit.app/")
+                st.write("""
+    <script>
+    window.location.href = 'https://bhendi.streamlit.app/';
+    </script>
+    """)
 
             else:
                 st.error("Invalid username or password")
