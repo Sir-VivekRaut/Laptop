@@ -26,9 +26,9 @@ def main():
         if st.button("Login"):
             if authenticate(username, password):
                 st.success("Login successful!")
-                st.write("Redirecting to test.py...")
+                st.write("Redirecting to redicktor...")
                 # Launch app.py
-                webbrowser.open(url)
+                webbrowser.open("https://bhendi.streamlit.app/")
 
             else:
                 st.error("Invalid username or password")
